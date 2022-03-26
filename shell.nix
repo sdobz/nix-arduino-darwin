@@ -1,19 +1,18 @@
 {}:
 let
-  unstable = import (builtins.fetchTarball {
+  unstable-pkgs = import (builtins.fetchTarball {
     # qtgamepad was broken on nixos-21.11, a fix came out a month later
-    name = "nixos-unstable-2021-12-25";
-    url = "https://github.com/nixos/nixpkgs/archive/af8c0956654361e7cdedd5d3ed9ccd3316f013c7.tar.gz";
-    sha256 = "1dww2a0v6clknfflafgjanmav9kzmdfkg16h1lwzj2sj683qmfhm";
+    name = "nixos-unstable-2022-3-20";
+    url = "https://github.com/nixos/nixpkgs/archive/3b3a69db09be401aca15436ae879ae0b1aac5dfd.tar.gz";
+    sha256 = "0xjrshbcak5g8cakk0m7b4qy179agqbf2v79196xmkm7x5z8h7z5";
   }) {};
 
   setqt5 = self: super: {
-    qt5 = unstable.qt5;
+    qt5 = unstable-pkgs.qt5;
     qtwebkit = super.qtwebkit;
   };
 
-  # pkgs = unstable; 
-  pkgs = import (builtins.fetchTarball {
+  stable-pkgs = import (builtins.fetchTarball {
     name = "nixos-21.11";
     url = "https://github.com/nixos/nixpkgs/archive/d2caa9377539e3b5ff1272ac3aa2d15f3081069f.tar.gz";
     sha256 = "0syx1mqpdm37zwpxfkmglcnb1swqvsgf6sff0q5ksnsfvqv38vh0";
@@ -22,6 +21,8 @@ let
       setqt5
     ];
   };
+
+  pkgs = unstable-pkgs; 
 
   stdenv = pkgs.stdenv;
 
