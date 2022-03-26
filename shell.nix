@@ -1,11 +1,28 @@
 {}:
 let
-  pkgs = import (builtins.fetchTarball {
+  unstable = import (builtins.fetchTarball {
     # qtgamepad was broken on nixos-21.11, a fix came out a month later
-    name = "nixos-unstable-2021-12-17";
-    url = "https://github.com/nixos/nixpkgs/archive/634141959076a8ab69ca2cca0f266852256d79ee.tar.gz";
-    sha256 = "0r6ac5pazrn1whas4jkca3ssqd5xl73nmxjq5qmsnli6rk2s5skv";
+    name = "nixos-unstable-2021-12-25";
+    url = "https://github.com/nixos/nixpkgs/archive/af8c0956654361e7cdedd5d3ed9ccd3316f013c7.tar.gz";
+    sha256 = "1dww2a0v6clknfflafgjanmav9kzmdfkg16h1lwzj2sj683qmfhm";
   }) {};
+
+  setqt5 = self: super: {
+    qt5 = unstable.qt5;
+    qtwebkit = super.qtwebkit;
+  };
+
+  # pkgs = unstable; 
+  pkgs = import (builtins.fetchTarball {
+    name = "nixos-21.11";
+    url = "https://github.com/nixos/nixpkgs/archive/d2caa9377539e3b5ff1272ac3aa2d15f3081069f.tar.gz";
+    sha256 = "0syx1mqpdm37zwpxfkmglcnb1swqvsgf6sff0q5ksnsfvqv38vh0";
+  }) {
+    overlays = [
+      setqt5
+    ];
+  };
+
   stdenv = pkgs.stdenv;
 
   arduino-darwin = stdenv.mkDerivation rec {
