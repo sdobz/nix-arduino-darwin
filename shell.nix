@@ -12,17 +12,25 @@ let
     qtwebkit = super.qtwebkit;
   };
 
+  setdarwin = self: super: {
+    pulseview-darwin = super.pulseview.overrideAttrs (old: {
+      meta = {
+        
+      };
+    });
+  };
+
   stable-pkgs = import (builtins.fetchTarball {
     name = "nixos-21.11";
     url = "https://github.com/nixos/nixpkgs/archive/d2caa9377539e3b5ff1272ac3aa2d15f3081069f.tar.gz";
     sha256 = "0syx1mqpdm37zwpxfkmglcnb1swqvsgf6sff0q5ksnsfvqv38vh0";
   }) {
     overlays = [
-      setqt5
+      # setqt5
     ];
   };
 
-  pkgs = unstable-pkgs; 
+  pkgs = stable-pkgs; 
 
   stdenv = pkgs.stdenv;
 
@@ -42,7 +50,7 @@ let
     '';
   };
 
-  pulseview-darwin = stdenv.mkDerivation rec {
+  pulseview-darwin-manual = stdenv.mkDerivation rec {
     pname = "pulseview";
     version = "0.4.1";
 
@@ -70,6 +78,17 @@ let
     ];
 
   };
+
+  pulseview-darwin = pkgs.pulseview.overrideAttrs (old: {
+    buildInputs = with pkgs; [
+      glib boost libsigrok libsigrokdecode libserialport libzip libusb1 libftdi1 glibmm
+      pcre librevisa python3
+      qt5.qtbase qt5.qtsvg
+    ];
+    meta = old.meta // {
+      platforms = pkgs.lib.platforms.darwin;
+    };
+  });
 in
 pkgs.mkShell {
     buildInputs = [
